@@ -6,4 +6,3 @@ mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api', {
     useUnifiedTopology: true,
     useFindAndModify: false //to remove warning when using findByIdAndUpdate
 })
-

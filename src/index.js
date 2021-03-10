@@ -49,7 +49,7 @@ app.patch('/users/:id', async (req, res) => {
     const allowedUpdates = ['name', 'email', 'password', 'age']
     const isValidOperation = updates.every(update => allowedUpdates.includes(update))
 
-    if (!isValidOperation) return res.status(400).send({ 'error': 'Invalid updates!' })
+    if (!isValidOperation) return res.status(400).send({ 'error': 'Invalid update!' })
 
     try { // elements in req.body that don't exist in user model, will be ignored
         const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
@@ -57,6 +57,24 @@ app.patch('/users/:id', async (req, res) => {
         if (!user) return res.status(404).send()
 
         res.send(user)
+    } catch (error) {
+        res.status(400).send(error)
+    }
+})
+
+app.patch('/tasks/:id', async (req, res) => {
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['description', 'completed']
+    const isValidOperation = updates.every(update => allowedUpdates.includes(update))
+
+    if (!isValidOperation) return res.status(400).send({ 'error': 'Invalid update!' })
+
+    try {
+        const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+
+        if (!task) return res.status(404).send()
+
+        res.send(task)
     } catch (error) {
         res.status(400).send(error)
     }

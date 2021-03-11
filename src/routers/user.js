@@ -47,7 +47,14 @@ router.patch('/users/:id', async (req, res) => {
     if (!isValidOperation) return res.status(400).send({ 'error': 'Invalid update!' })
 
     try { // elements in req.body that don't exist in user model, will be ignored
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+        const user = await User.findById(req.params.id)
+
+        updates.forEach(update => user[update] = req.body[update])
+
+        await user.save() //This DOES call the middleware
+
+        //Bypasses the pre middleware to hash password
+        //const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
 
         if (!user) return res.status(404).send()
 

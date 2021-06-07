@@ -7,14 +7,29 @@ const taskRouter = require('./routers/task')
 const app = express()
 const port = process.env.PORT || 3000
 
-// app.use((req, res, next) => {
-//     if (req.method === 'GET') res.send('GET requests are disabled')
-//     else next()
-// })
+const multer = require('multer')
+const upload = multer({
+    dest: 'images',
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        if(!file.originalname.match(/\.(doc|docx)$/)) {
+            return cb(new Error('File must be a Word document'))
+        }
 
-// app.use((req, res, next) => {
-//     res.status(503).send('App is in maintenance')
-// })
+        cb(undefined, true)
+
+        // cb(new Error('File must be a PDF'))
+        // cb(undefined, true)
+        // cb(undefined, false)
+    }
+})
+app.post('/upload', upload.single('upload'), (req, res) => {
+    res.send()
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message })
+})
 
 app.use(express.json())
 app.use(userRouter, taskRouter)
